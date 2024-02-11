@@ -1,13 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { createContext, useEffect, useState } from "react";
 import Layout from "../components/Layout";
+import VendorTypes from "../components/Vendor/VendorTypes";
+import VendorOptions from "../components/Vendor/VendorOption";
+import ActivityCardVendor from "../components/Vendor/ActivityCardVendor";
+import PaginationVendor from "../components/Vendor/PaginationVendor";
 import {
   fetchVendorData,
   fetchActivityData,
   fetchActivityVendorData,
-  fetchPackageData,
-  fetchPackageVendorData,
 } from "../utils/api";
+import PriceFilter from "../components/Activity/PriceFilter";
 import VendorContent from "../components/Vendor/VendorContent";
 
 export const VendorContext = createContext();
@@ -29,12 +32,6 @@ export default function VendorScreen() {
   const [currentActivityVendor, setCurrentActivityVendor] = useState(1);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [allPackage, setAllPackage] = useState([]);
-  const [currentAllPackagePage, setCurrentAllPackagePage] = useState(1);
-  const [totalPackagePages, setTotalPackagePages] = useState(1);
-  const [packageVendor, setPackageVendor] = useState([]);
-  const [currentPackageVendor, setCurrentPackageVendor] = useState(1);
-  const [totalPackageVendor, setTotalPackageVendor] = useState(1);
 
   useEffect(() => {
     fetchVendor();
@@ -43,10 +40,8 @@ export default function VendorScreen() {
   useEffect(() => {
     if (selectedVendor === "") {
       fetchActivity(currentPage);
-      fetchPackage(currentPage);
     } else {
       fetchActivityVendor(currentPage);
-      fetchPackageVendor(currentPage);
     }
   }, [
     selectedVendor,
@@ -59,33 +54,11 @@ export default function VendorScreen() {
 
   useEffect(() => {
     fetchActivityVendor(currentActivityVendor);
-  }, [
-    selectedVendor,
-    currentActivityVendor,
-    searchQuery,
-    selectedTypes,
-    minPrice,
-    maxPrice,
-  ]);
-
-  useEffect(() => {
-    fetchPackageVendor(currentPackageVendor);
-  }, [
-    selectedVendor,
-    currentPackageVendor,
-    searchQuery,
-    selectedTypes,
-    minPrice,
-    maxPrice,
-  ]);
+  }, [selectedVendor, currentActivityVendor, searchQuery, selectedTypes]);
 
   useEffect(() => {
     fetchActivity(currentAllActivityPage);
   }, [currentAllActivityPage, searchQuery, selectedTypes, minPrice, maxPrice]);
-
-  useEffect(() => {
-    fetchPackage(currentAllPackagePage);
-  }, [currentAllPackagePage, searchQuery, selectedTypes, minPrice, maxPrice]);
 
   const fetchVendor = async () => {
     try {
@@ -115,54 +88,11 @@ export default function VendorScreen() {
     }
   };
 
-  const fetchPackage = async (page) => {
-    try {
-      const dataPackage = await fetchPackageData(
-        page,
-        searchQuery,
-        minPrice,
-        maxPrice
-      );
-      setAllPackage(dataPackage.data);
-      setTotalPackagePages(
-        Math.ceil(dataPackage.meta.total / dataPackage.meta.limit)
-      );
-      setLoading(false);
-      setNotFound(dataPackage.data.length === 0);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
-
   const fetchActivityVendor = async (page) => {
     try {
-      const data = await fetchActivityVendorData(
-        selectedVendor,
-        page,
-        searchQuery,
-        minPrice,
-        maxPrice
-      );
+      const data = await fetchActivityVendorData(selectedVendor, page);
       setActivityVendor(data.data);
       setTotalActivityVendor(Math.ceil(data.meta.total / data.meta.limit));
-      setLoading(false);
-      setNotFound(data.data.length === 0);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
-
-  const fetchPackageVendor = async (page) => {
-    try {
-      const data = await fetchPackageVendorData(
-        selectedVendor,
-        page,
-        searchQuery,
-        minPrice,
-        maxPrice
-      );
-      setPackageVendor(data.data);
-      setTotalPackageVendor(Math.ceil(data.meta.total / data.meta.limit));
       setLoading(false);
       setNotFound(data.data.length === 0);
     } catch (error) {
@@ -189,7 +119,6 @@ export default function VendorScreen() {
     if (selectedValue === "") {
       setSearchQuery("");
       setActivityVendor([]);
-      // setPackageVendor([]);
     }
     console.log("Nilai yang dipilih:", selectedValue);
   };
@@ -197,69 +126,49 @@ export default function VendorScreen() {
   const handleClearFilter = () => {
     setMinPrice("");
     setMaxPrice("");
+    // setSearchQuery("");
     setLoading(false);
-    setCurrentAllActivityPage(1);
     setCurrentAllActivityPage(1);
   };
 
-  console.log("allPackage", allPackage);
-  console.log("allPackageVendor", packageVendor);
-
   return (
     <Layout>
-      <VendorContext.Provider
-        value={{
-          activity,
-          setActivity,
-          activityVendor,
-          setActivityVendor,
-          allActivityVendor,
-          setAllActivityVendor,
-          selectedVendor,
-          setSelectedVendor,
-          currentPage,
-          setCurrentPage,
-          totalPages,
-          setTotalPages,
-          searchQuery,
-          setSearchQuery,
-          loading,
-          setLoading,
-          notFound,
-          setNotFound,
-          selectedTypes,
-          setSelectedTypes,
-          totalActivityPages,
-          setTotalActivityPages,
-          currentAllActivityPage,
-          setCurrentAllActivityPage,
-          totalActivityVendor,
-          setTotalActivityVendor,
-          currentActivityVendor,
-          setCurrentActivityVendor,
-          handleTypeChange,
-          handleVendorChange,
-          handleClearFilter,
-          minPrice,
-          setMinPrice,
-          maxPrice,
-          setMaxPrice,
-          allPackage,
-          setAllPackage,
-          currentAllPackagePage,
-          setCurrentAllPackagePage,
-          totalPackagePages,
-          setTotalPackagePages,
-          packageVendor,
-          setPackageVendor,
-          currentPackageVendor,
-          setCurrentPackageVendor,
-          totalPackageVendor,
-          setTotalPackageVendor,
-        }}
-      >
-        <VendorContent />
-      </VendorContext.Provider>
-    </Layout>
+    <VendorContext.Provider
+      value={{
+        activity,
+        setActivity,
+        activityVendor,
+        setActivityVendor,
+        allActivityVendor,
+        setAllActivityVendor,
+        selectedVendor,
+        setSelectedVendor,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        setTotalPages,
+        searchQuery,
+        setSearchQuery,
+        loading,
+        setLoading,
+        notFound,
+        setNotFound,
+        selectedTypes,
+        setSelectedTypes,
+        totalActivityPages,
+        setTotalActivityPages,
+        currentAllActivityPage,
+        setCurrentAllActivityPage,
+        totalActivityVendor,
+        setTotalActivityVendor,
+        currentActivityVendor,
+        setCurrentActivityVendor,
+        handleTypeChange,
+        handleVendorChange,
+      }}
+    >
+      <VendorContent />
+    </VendorContext.Provider>
+  </Layout>
   );
 }
