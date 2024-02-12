@@ -25,6 +25,31 @@ export async function fetchVendorData(selectedTypes, searchQuery) {
   }
 }
 
+export async function fetchTypeVendorData() {
+  try {
+    const response = await fetch(
+      `https://api.dev.vacaba.id/api/v1/activity-service/activity-vendor?page=1&limit=20`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": "VACABADEV",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data aktivitas vendor");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error);
+    throw error;
+  }
+}
+
 export async function fetchActivityData(page, searchQuery, minPrice, maxPrice) {
   try {
     const response = await fetch(

@@ -5,31 +5,17 @@ export default function VendorTypes({
   selectedTypes,
   handleTypeChange,
   setSelectedTypes,
-  vendorType
 }) {
   const types = activity?.data?.flatMap((o) => o.types);
   const uniqueTypes = [...new Set(types)];
 
-  const typesVendor = [
-    "outdoor",
-    "Beach Club",
-    "Entertainment",
-    "watersport",
-    "test",
-    "test 2",
-  ];
-
   console.log("uniqueTypes", uniqueTypes);
-
-  console.log("activity", activity);
-
-  console.log("vendorType", vendorType);
 
   return (
     <div className="mt-4 flex flex-col">
       <div className="flex flex-col gap-2">
         <span>Choose The Activity</span>
-        {typesVendor.map((type) => (
+        {uniqueTypes.map((type) => (
           <label key={type} className="inline-flex items-center">
             <input
               type="checkbox"

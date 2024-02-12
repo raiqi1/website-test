@@ -11,6 +11,7 @@ function VendorContent() {
   const {
     activity,
     selectedTypes,
+    setSelectedTypes,
     handleTypeChange,
     selectedVendor,
     handleVendorChange,
@@ -38,6 +39,9 @@ function VendorContent() {
     currentPackageVendor,
     setCurrentPackageVendor,
     totalPackageVendor,
+    setTotalPackageVendor,
+    vendorType,
+    setVendorType,
   } = useContext(VendorContext);
 
   const [activeDetail, setActiveDetail] = useState("products");
@@ -46,6 +50,7 @@ function VendorContent() {
   console.log("selectedVendor", selectedVendor);
   console.log("allPackage", allPackage);
   console.log("packageVendor", packageVendor);
+  console.log("vendorType", vendorType);
 
   useEffect(() => {
     if (selectedVendor === "") {
@@ -55,7 +60,8 @@ function VendorContent() {
 
   useEffect(() => {
     if (loading) {
-      setCurrentAllActivityPage(1); // Reset halaman saat loading dimulai
+      setCurrentAllActivityPage(1);
+      setCurrentAllPackagePage(1);
     }
   }, [loading]);
 
@@ -68,6 +74,8 @@ function VendorContent() {
             activity={activity}
             selectedTypes={selectedTypes}
             handleTypeChange={handleTypeChange}
+            setSelectedTypes={setSelectedTypes}
+            vendorType={vendorType}
           />
           <div className="mt-4 flex flex-col">
             <label htmlFor="vendorSelect" className="mr-2">
@@ -96,23 +104,7 @@ function VendorContent() {
           </div>
           <div>{loading && <p>Memuat...</p>}</div>
         </div>
-        {/* <div>
-          <div className="flex flex-wrap mt-4 gap-7">
-            {loading && <p className="text-gray-600">Memuat...</p>}
-            {!loading &&
-              activityVendor.length === 0 &&
-              selectedVendor !== "" && <p>Aktivitas tidak ditemukan</p>}
-            {!loading &&
-              selectedVendor === "" &&
-              allActivityVendor.map((a) => (
-                <ActivityCardVendor activity={a} key={a.id} />
-              ))}
-            {!loading &&
-              activityVendor.map((a) => (
-                <ActivityCardVendor activity={a} key={a.id} />
-              ))}
-          </div>
-        </div> */}
+
         <div className="flex">
           <div className=" w-full">
             <ul className="flex gap-8 w-full mt-4">

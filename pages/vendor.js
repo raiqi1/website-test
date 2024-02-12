@@ -7,6 +7,7 @@ import {
   fetchActivityVendorData,
   fetchPackageData,
   fetchPackageVendorData,
+  fetchTypeVendorData,
 } from "../utils/api";
 import VendorContent from "../components/Vendor/VendorContent";
 
@@ -35,10 +36,15 @@ export default function VendorScreen() {
   const [packageVendor, setPackageVendor] = useState([]);
   const [currentPackageVendor, setCurrentPackageVendor] = useState(1);
   const [totalPackageVendor, setTotalPackageVendor] = useState(1);
+  const [vendorType, setVendorType] = useState([]);
 
   useEffect(() => {
     fetchVendor();
   }, [currentPage, searchQuery, selectedTypes]);
+
+  useEffect(() => {
+    fetchTypeVendor();
+  },[])
 
   useEffect(() => {
     if (selectedVendor === "") {
@@ -97,6 +103,19 @@ export default function VendorScreen() {
       setLoading(false);
     }
   };
+
+  const fetchTypeVendor = async () => {
+    try {
+      const data = await fetchTypeVendorData();
+      setVendorType(data.data);
+      setLoading(false);
+      setNotFound(data.data.length === 0);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  console.log("vendorType", vendorType);
 
   const fetchActivity = async (page) => {
     try {
@@ -189,7 +208,7 @@ export default function VendorScreen() {
     if (selectedValue === "") {
       setSearchQuery("");
       setActivityVendor([]);
-      // setPackageVendor([]);
+      setPackageVendor([]);
     }
     console.log("Nilai yang dipilih:", selectedValue);
   };
@@ -256,6 +275,8 @@ export default function VendorScreen() {
           setCurrentPackageVendor,
           totalPackageVendor,
           setTotalPackageVendor,
+          vendorType,
+          setVendorType,
         }}
       >
         <VendorContent />

@@ -1,6 +1,7 @@
 import React from "react";
 
 const VendorOptions = ({ vendors }) => {
+  console.log("vendors", vendors)
 
   return (
     <>
