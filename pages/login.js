@@ -29,7 +29,7 @@ export default function LoginScreen() {
   const submitHandler = async ({ email, password }) => {
     try {
       setLoading(true);
-
+  
       const response = await fetch(
         "https://api.dev.vacaba.id/api/v1/auth/login",
         {
@@ -42,19 +42,19 @@ export default function LoginScreen() {
           body: JSON.stringify({ email, password }),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Gagal Login");
       }
-
+  
       const data = await response.json();
       const accessToken = data.data;
       localStorage.setItem("token", accessToken.access.token);
       localStorage.setItem("refreshToken", accessToken.refresh.token);
-
+  
       console.log("Data aktivitas pengguna:", data);
-
-      router.push("/");
+  
+      router.push(redirect || "/"); // Mengarahkan kembali ke halaman yang ditentukan
     } catch (error) {
       console.error("Terjadi kesalahan:", error);
       toast.error(getError(error));
@@ -62,6 +62,7 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
+  
 
   return (
     <Layout title="Login">

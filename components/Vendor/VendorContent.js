@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import VendorTypes from "./VendorTypes";
-import VendorOptions from "./VendorOption";
-import ActivityCardVendor from "./ActivityCardVendor";
-import PaginationVendor from "./PaginationVendor";
-import PriceFilter from "../Activity/PriceFilter";
-import { VendorContext } from "../../pages/vendor";
-import PackageCardVendor from "./PackageCardVendor";
+import React, { useContext, useEffect, useState } from 'react'
+import VendorTypes from './VendorTypes'
+import VendorOptions from './VendorOption'
+import ActivityCardVendor from './ActivityCardVendor'
+import PaginationVendor from './PaginationVendor'
+import PriceFilter from '../Activity/PriceFilter'
+import { VendorContext } from '../../pages/vendor'
+import PackageCardVendor from './PackageCardVendor'
 
 function VendorContent() {
   const {
@@ -19,6 +19,7 @@ function VendorContent() {
     notFound,
     allActivityVendor,
     activityVendor,
+    setActivityVendor,
     currentActivityVendor,
     totalActivityVendor,
     currentAllActivityPage,
@@ -42,28 +43,30 @@ function VendorContent() {
     setTotalPackageVendor,
     vendorType,
     setVendorType,
-  } = useContext(VendorContext);
+  } = useContext(VendorContext)
 
-  const [activeDetail, setActiveDetail] = useState("products");
+  const [activeDetail, setActiveDetail] = useState('products')
+  const [showActivityNotFound, setShowActivityNotFound] = useState(false)
 
-  console.log("activityVendor", activityVendor);
-  console.log("selectedVendor", selectedVendor);
-  console.log("allPackage", allPackage);
-  console.log("packageVendor", packageVendor);
-  console.log("vendorType", vendorType);
+  console.log('activityVendor', activityVendor)
+  console.log('selectedVendor', selectedVendor)
+  console.log('allPackage', allPackage)
+  console.log('packageVendor', packageVendor)
+  console.log('vendorType', vendorType)
 
-  useEffect(() => {
-    if (selectedVendor === "") {
-      setPackageVendor([]);
-    }
-  }, [activityVendor, selectedVendor, loading, allPackage]);
+  // useEffect(() => {
+  //   if (selectedVendor === '') {
+  //     setPackageVendor([])
+  //     setActivityVendor([])
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (loading) {
-      setCurrentAllActivityPage(1);
-      setCurrentAllPackagePage(1);
+      setCurrentAllActivityPage(1)
+      setCurrentAllPackagePage(1)
     }
-  }, [loading]);
+  }, [loading])
 
   return (
     <div className="mt-6 ml-6">
@@ -102,7 +105,6 @@ function VendorContent() {
               handleClearFilter={handleClearFilter}
             />
           </div>
-          <div>{loading && <p>Memuat...</p>}</div>
         </div>
 
         <div className="flex">
@@ -110,11 +112,11 @@ function VendorContent() {
             <ul className="flex gap-8 w-full mt-4">
               <li className="">
                 <button
-                  onClick={() => setActiveDetail("products")}
+                  onClick={() => setActiveDetail('products')}
                   className={`transition ${
-                    activeDetail === "products"
-                      ? "border-b-2 border-black text-black"
-                      : "border-b hover:border-b-2 hover:border-black"
+                    activeDetail === 'products'
+                      ? 'border-b-2 border-black text-black'
+                      : 'border-b hover:border-b-2 hover:border-black'
                   }`}
                 >
                   Products
@@ -122,11 +124,11 @@ function VendorContent() {
               </li>
               <li className="">
                 <button
-                  onClick={() => setActiveDetail("packagesection")}
+                  onClick={() => setActiveDetail('packagesection')}
                   className={`transition ${
-                    activeDetail === "packagesection"
-                      ? "border-b-2 border-black text-black"
-                      : "border-b hover:border-b-2 hover:border-black"
+                    activeDetail === 'packagesection'
+                      ? 'border-b-2 border-black text-black'
+                      : 'border-b hover:border-b-2 hover:border-black'
                   }`}
                 >
                   Packages
@@ -134,11 +136,11 @@ function VendorContent() {
               </li>
             </ul>
             <div>
-              {activeDetail === "products" && (
+              {activeDetail === 'products' && (
                 <section className="mt-4 mb-4 flex flex-col ">
                   <div className="flex gap-5">
                     {!loading &&
-                      selectedVendor === "" &&
+                      selectedVendor === '' &&
                       allActivityVendor.map((a) => (
                         <ActivityCardVendor activity={a} key={a.id} />
                       ))}
@@ -146,6 +148,14 @@ function VendorContent() {
                       activityVendor.map((a) => (
                         <ActivityCardVendor activity={a} key={a.id} />
                       ))}
+                    <div>
+                      <div>{loading && <p>Memuat...</p>}</div>
+                      <div>
+                        {!loading && allActivityVendor.length === 0 && (
+                          <p>Activity Not Found</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div className="justify-center flex">
                     {activityVendor.length > 0 ? (
@@ -155,9 +165,9 @@ function VendorContent() {
                         setCurrentPage={setCurrentActivityVendor}
                       />
                     ) : (
-                      ""
+                      ''
                     )}
-                    {selectedVendor === "" && (
+                    {selectedVendor === '' && (
                       <PaginationVendor
                         currentPage={currentAllActivityPage}
                         totalPages={totalActivityPages}
@@ -167,11 +177,11 @@ function VendorContent() {
                   </div>
                 </section>
               )}
-              {activeDetail === "packagesection" && (
+              {activeDetail === 'packagesection' && (
                 <section className="mt-4 mb-4 flex flex-col">
                   <div className="flex gap-5">
                     {!loading &&
-                      selectedVendor === "" &&
+                      selectedVendor === '' &&
                       allPackage.map((p, i) => (
                         <PackageCardVendor packageCard={p} key={i} />
                       ))}
@@ -188,9 +198,9 @@ function VendorContent() {
                         setCurrentPage={setCurrentPackageVendor}
                       />
                     ) : (
-                      ""
+                      ''
                     )}
-                    {selectedVendor === "" && (
+                    {selectedVendor === '' && (
                       <PaginationVendor
                         currentPage={currentAllPackagePage}
                         totalPages={totalPackagePages}
@@ -205,7 +215,7 @@ function VendorContent() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default VendorContent;
+export default VendorContent
