@@ -57,12 +57,12 @@ function VendorContent() {
   console.log('packageVendor', packageVendor)
   console.log('vendorType', vendorType)
 
-  // useEffect(() => {
-  //   if (loading) {
-  //     setCurrentAllActivityPage(1)
-  //     setCurrentAllPackagePage(1)
-  //   }
-  // }, [loading])
+  useEffect(() => {
+    if (loading) {
+      setCurrentAllActivityPage(1)
+      setCurrentAllPackagePage(1)
+    }
+  }, [loading])
 
   return (
     <div className="mt-6 ml-6">
@@ -99,7 +99,7 @@ function VendorContent() {
               setMinPrice={setMinPrice}
               setMaxPrice={setMaxPrice}
               handleClearFilter={handleClearFilter}
-              filtering={filtering}
+              filtering={filtering} 
             />
           </div>
         </div>
@@ -157,7 +157,7 @@ function VendorContent() {
                     </div>
                   </div>
                   <div className="justify-center flex">
-                    {!loading && activityVendor.length > 0 ? (
+                    {activityVendor.length > 0 ? (
                       <PaginationVendor
                         currentPage={currentActivityVendor}
                         totalPages={totalActivityVendor}
@@ -166,7 +166,7 @@ function VendorContent() {
                     ) : (
                       ''
                     )}
-                    {!loading && selectedVendor === '' && (
+                    { selectedVendor === '' && (
                       <PaginationVendor
                         currentPage={currentAllActivityPage}
                         totalPages={totalActivityPages}
@@ -198,7 +198,7 @@ function VendorContent() {
                     </div>
                   </div>
                   <div className="justify-center flex">
-                    {!loading && packageVendor.length > 0 ? (
+                    { packageVendor.length > 0 ? (
                       <PaginationVendor
                         currentPage={currentPackageVendor}
                         totalPages={totalPackageVendor}
@@ -207,7 +207,7 @@ function VendorContent() {
                     ) : (
                       ''
                     )}
-                    {!loading && selectedVendor === '' && (
+                    {selectedVendor === '' && (
                       <PaginationVendor
                         currentPage={currentAllPackagePage}
                         totalPages={totalPackagePages}

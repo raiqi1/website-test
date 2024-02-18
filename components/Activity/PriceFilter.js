@@ -5,13 +5,14 @@ export default function PriceFilter({
   maxPrice,
   setMinPrice,
   setMaxPrice,
-  //   handleFilterChange,
+  handleFilterChange,
   handleClearFilter,
+  filtering,
 }) {
   return (
     <div>
-      <div className=" mr-5 flex flex-col gap-2 mt-3 p-1">
-        <h1 className=" font-bold">Filter Price</h1>
+      <div className="mr-5 flex flex-col gap-2 mt-3 p-1">
+        <h1 className="font-bold">Filter Price</h1>
         <div className="flex flex-row gap-3">
           <input
             type="text"
@@ -20,7 +21,7 @@ export default function PriceFilter({
             placeholder="Rp. min"
             onChange={(e) => setMinPrice(e.target.value)}
           />
-          <div className=" mt-4 border-gray-500 border-t w-8 flex justify-center"></div>{" "}
+          <div className="mt-4 border-gray-500 border-t w-8 flex justify-center"></div>{" "}
           <input
             type="text"
             value={maxPrice}
@@ -29,11 +30,19 @@ export default function PriceFilter({
             onChange={(e) => setMaxPrice(e.target.value)}
           />
         </div>
-        <button
+        {/* <button
           className="bg-red-500 text-white p-1 rounded"
-          onClick={handleClearFilter}
+          onClick={handleFilterChange}
+          disabled={filtering}
         >
-          <h1 className="text-sm">Clear</h1>
+          <h1 className="text-sm">{filtering ? 'Filtering...' : 'Filter'}</h1>
+        </button> */}
+        <button
+          className={`bg-red-500 text-white p-1 rounded ${filtering && 'opacity-50 cursor-not-allowed'}`}
+          onClick={handleClearFilter}
+          disabled={filtering}
+        >
+          <h1 className="text-sm">{filtering ? 'Clearing...' : 'Clear'}</h1>
         </button>
       </div>
     </div>

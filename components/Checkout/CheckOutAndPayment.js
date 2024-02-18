@@ -2,7 +2,11 @@
 import React from 'react'
 import { FaUser } from 'react-icons/fa'
 
-export default function CheckOutAndPayment({ dataCheckout }) {
+export default function CheckOutAndPayment({
+  dataCheckout,
+  pointData,
+  discountedTotalFee,
+}) {
   const formatRupiah = (price) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -11,7 +15,7 @@ export default function CheckOutAndPayment({ dataCheckout }) {
     }).format(price)
   }
   return (
-    <div className='flex'>
+    <div className="flex">
       <div className="flex gap-2 w-full">
         <img src={dataCheckout.productThumbnail} alt="" className="w-60" />
         <div className="w-full">
@@ -45,22 +49,17 @@ export default function CheckOutAndPayment({ dataCheckout }) {
               </h2>
             </div>
             <div className="flex justify-between  pb-1 border-b">
-              <h1 className="text-sm">Delivery Fee</h1>
-              <h2 className="font-bold">
-                {formatRupiah(dataCheckout.additionalFee)}
-              </h2>
+              <h1 className="text-sm">Your Point</h1>
+              <h2 className="font-bold">{formatRupiah(pointData.points)}</h2>
             </div>
             <div className="flex justify-between  pb-1 border-b ">
               <h1 className="text-sm">Total</h1>
               <h2 className="font-bold">
-                {formatRupiah(dataCheckout.totalFee)}
+                {formatRupiah(discountedTotalFee)}
               </h2>
             </div>
           </div>
         </div>
-      </div>
-      <div className='w-fit'>
-        <h1>Payment Method</h1>
       </div>
     </div>
   )

@@ -1,16 +1,22 @@
-/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
 import CheckoutPage from '../../../components/Checkout'
 import { useRouter } from 'next/router'
+import {
+  setDestinationTarget,
+  setLoading,
+  setNumberOfPerson,
+  setCheckoutData,
+  setUserData,
+} from '../../../tool/checkoutSlice'
+import {
+  fetchUserData,
+  fetchActivityData,
+  checkoutActivity,
+} from '../../../tool/api'
 
 export default function Checkout() {
-  const [destinationTarget, setDestinationsTarget] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [numberOfPerson, setNumberOfPerson] = useState(1)
-  const [checkoutData, setCheckoutData] = useState({})
-  const router = useRouter()
-
   const formatRupiah = (price) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -18,49 +24,66 @@ export default function Checkout() {
       minimumFractionDigits: 0,
     }).format(price)
   }
-
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  const dispatch = useDispatch()
+  const { destinationTarget, loading, userData } = useSelector(
+    (state) => state.checkout,
+  )
+  const router = useRouter()
+  const [previousPage, setPreviousPage] = useState(null)
 
   const {
     handleSubmit,
     register,
     formState: { errors },
+    setValue,
   } = useForm()
 
-  const fetchDataActivity = async (id) => {
-    try {
-      const response = await fetch(
-        `https://api.dev.vacaba.id/api/v1/activity-service/activity/${id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': 'VACABADEV',
-          },
-        },
-      )
-
-      if (!response.ok) {
-        throw new Error('Gagal mengambil data destinasi')
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(setLoading(true))
+        const token = localStorage.getItem('token')
+        const data = await fetchUserData(token, router)
+        dispatch(setUserData(data))
+      } catch (error) {
+        console.error(error)
+        setPreviousPage(window.location.href)
+        router.push('/login')
+      } finally {
+        dispatch(setLoading(false))
       }
-
-      const data = await response.json()
-      setDestinationsTarget(data.data)
-
-      // Set nilai default numberOfPerson dari data.data
-      setNumberOfPerson(data.data.minPerson || 1)
-    } catch (err) {
-      console.log(err.message)
     }
-  }
 
-  console.log('numberOfPerson', numberOfPerson)
+    fetchData()
+  }, [dispatch, router])
 
   useEffect(() => {
-    const id = window.location.pathname.split('/').pop()
-    fetchDataActivity(id)
-  }, [])
+    const fetchDataActivity = async () => {
+      try {
+        const id = window.location.pathname.split('/').pop()
+        const data = await fetchActivityData(id)
+        dispatch(setDestinationTarget(data))
+        dispatch(setNumberOfPerson(data.minPerson || 1))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchDataActivity()
+  }, [dispatch])
+
+  useEffect(() => {
+    // Set nilai default menggunakan setValue setelah fetchUser
+    if (userData?.name) {
+      setValue('contactFullname', userData.name)
+    }
+    if (userData?.phoneNumber) {
+      setValue('contactNumber', userData.phoneNumber)
+    }
+    if (userData?.email) {
+      setValue('contactEmail', userData.email)
+    }
+  }, [userData, setValue])
 
   const submitHandler = async ({
     contactEmail,
@@ -70,154 +93,138 @@ export default function Checkout() {
     numberOfPerson,
   }) => {
     try {
-      const response = await fetch(
-        'https://api.dev.vacaba.id/api/v1/activity-service/checkout',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            contactEmail,
-            contactFullname,
-            contactNumber,
-            date: new Date(date).toISOString(),
-            numberOfPerson: parseInt(numberOfPerson), // Konversi ke angka
-            productType: 'activity',
-            productUUID: destinationTarget.id,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            'X-Api-Key': 'VACABADEV',
-          },
-        },
+      const token = localStorage.getItem('token')
+      const productUUID = destinationTarget.id
+      const data = await checkoutActivity(
+        token,
+        contactEmail,
+        contactFullname,
+        contactNumber,
+        date,
+        numberOfPerson,
+        productUUID,
       )
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Jika status 401, arahkan pengguna ke halaman login dengan menyertakan parameter redirect
-          router.push(`/login?redirect=${window.location.pathname}`)
-          return
-        }
-        throw new Error('Gagal mengambil data destinasi')
+      dispatch(setCheckoutData(data))
+      if (previousPage) {
+        router.push(previousPage)
+      } else {
+        const id = data.id
+        router.push(`/activity/checkout-success/${id}`)
       }
-      const data = await response.json()
-      setCheckoutData(data.data)
-      console.log(data)
-    } catch (err) {
-      console.log(err.message)
+    } catch (error) {
+      console.error(error)
     }
   }
-
-  console.log('checkoutData', checkoutData)
-
-  useEffect(() => {
-    if (checkoutData.id) {
-      window.location.href = `/activity/checkout-success/${checkoutData.id}`
-    }
-  }, [checkoutData])
 
   return (
     <div className="ml-20">
       <div className="flex">
         <div className="w-full">
           <h1 className="text-2xl font-bold w-full mt-5">Checkout</h1>
-          <form
-            className="max-w-screen-md mt-7"
-            onSubmit={handleSubmit(submitHandler)}
-          >
-            <div className="mb-4">
-              <label htmlFor="contactFullname">Name</label>
-              <input
-                type="text"
-                className="w-full"
-                id="contactFullname"
-                {...register('contactFullname', {
-                  required: 'Silakan masukkan nama lengkap',
-                })}
-              />
-              {errors.contactFullname && (
-                <div className="text-red-500">
-                  {errors.contactFullname.message}
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="contactNumber">Telpon Number</label>
-              <input
-                type="text"
-                className="w-full"
-                id="contactNumber"
-                {...register('contactNumber', {
-                  required: 'Silakan masukkan nama lengkap',
-                })}
-              />
-              {errors.contactNumber && (
-                <div className="text-red-500">
-                  {errors.contactNumber.message}
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="contactEmail">Email</label>
-              <input
-                type="email"
-                {...register('contactEmail', {
-                  required: 'Silakan masukkan email',
-                  pattern: {
-                    value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
-                    message: 'Silakan masukkan email yang valid',
-                  },
-                })}
-                className="w-full"
-                id="contactEmail"
-              />
-              {errors.contactEmail && (
-                <div className="text-red-500">
-                  {errors.contactEmail.message}
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="date">Date</label>
-              <input
-                type="date"
-                {...register('date', {
-                  required: 'Silakan pilih tanggal',
-                })}
-                className="w-full"
-                id="date"
-              />
-              {errors.date && (
-                <div className="text-red-500">{errors.date.message}</div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label htmlFor="numberOfPerson">Number Of Person</label>
-              <div className="flex items-center">
+          {userData ? (
+            <form
+              className="max-w-screen-md mt-7"
+              onSubmit={handleSubmit(submitHandler)}
+            >
+              <div className="mb-4">
+                <label htmlFor="contactFullname">Name</label>
                 <input
-                  type="number"
+                  type="text"
                   className="w-full"
-                  id="numberOfPerson"
-                  {...register('numberOfPerson', {
-                    required: 'Silakan masukkan jumlah orang',
+                  id="contactFullname"
+                  {...register('contactFullname', {
+                    required: 'Silakan masukkan nama lengkap',
                   })}
+                  defaultValue={userData.name}
                 />
+                {errors.contactFullname && (
+                  <div className="text-red-500">
+                    {errors.contactFullname.message}
+                  </div>
+                )}
               </div>
-            </div>
 
-            <div className="mb-4">
-              <button
-                className={`primary-button ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                disabled={loading}
-              >
-                {loading ? 'Memuat...' : 'Daftar'}
-              </button>
-            </div>
-          </form>
+              <div className="mb-4">
+                <label htmlFor="contactNumber">Telpon Number</label>
+                <input
+                  type="text"
+                  className="w-full"
+                  id="contactNumber"
+                  {...register('contactNumber', {
+                    required: 'Silakan masukkan nama lengkap',
+                  })}
+                  defaultValue={userData.phoneNumber}
+                />
+                {errors.contactNumber && (
+                  <div className="text-red-500">
+                    {errors.contactNumber.message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="contactEmail">Email</label>
+                <input
+                  type="email"
+                  {...register('contactEmail', {
+                    required: 'Silakan masukkan email',
+                    pattern: {
+                      value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
+                      message: 'Silakan masukkan email yang valid',
+                    },
+                  })}
+                  defaultValue={userData.email}
+                  className="w-full"
+                  id="contactEmail"
+                />
+                {errors.contactEmail && (
+                  <div className="text-red-500">
+                    {errors.contactEmail.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="date">Date</label>
+                <input
+                  type="date"
+                  {...register('date', {
+                    required: 'Silakan pilih tanggal',
+                  })}
+                  className="w-full"
+                  id="date"
+                />
+                {errors.date && (
+                  <div className="text-red-500">{errors.date.message}</div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label htmlFor="numberOfPerson">Number Of Person</label>
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    className="w-full"
+                    id="numberOfPerson"
+                    {...register('numberOfPerson', {
+                      required: 'Silakan masukkan jumlah orang',
+                    })}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <button
+                  className={`primary-button ${
+                    loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  disabled={loading}
+                >
+                  {loading ? 'Memuat...' : 'Daftar'}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <p>Memuat data pengguna...</p>
+          )}
         </div>
         <div>
           <CheckoutPage
