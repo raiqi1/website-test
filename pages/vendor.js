@@ -101,6 +101,7 @@ export default function VendorScreen() {
       setActivity(dataVendor.data)
       setLoading(false)
       setNotFound(dataVendor.data.length === 0)
+      setNotFound(dataVendor.data.length === 0)
     } catch (error) {
       setLoading(false)
     }
@@ -207,7 +208,7 @@ export default function VendorScreen() {
         return { ...prev, [type]: true }
       }
     })
-    // setLoading(true)
+    setLoading(true)
   }
 
   const handleVendorChange = (e) => {
@@ -217,11 +218,12 @@ export default function VendorScreen() {
       setSearchQuery('')
       setActivityVendor([])
       setPackageVendor([])
+      setNotFound(false)
+      setNotFoundPackage(false)
     } else {
-      // Jika nilai yang dipilih berbeda, maka mengatur nilai selectedVendor seperti biasa.
       setSelectedVendor(selectedValue)
     }
-    // setLoading(true)
+    setLoading(true)
   }
 
   const handleClearFilter = () => {

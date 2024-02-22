@@ -14,49 +14,77 @@ export default function CheckOutAndPayment({
       minimumFractionDigits: 0,
     }).format(price)
   }
+
+  console.log('dataCheckout', dataCheckout)
+
   return (
-    <div className="flex">
-      <div className="flex gap-2 w-full">
-        <img src={dataCheckout.productThumbnail} alt="" className="w-60" />
+    <div className="flex mt-2 border px-3 py-5 rounded">
+      <div className="flex gap-2 w-full  px-3 py-5 rounded">
+        <img
+          src={dataCheckout.productThumbnail}
+          alt=""
+          className="w-60 h-64 mr-2 shadow-md rounded-lg"
+        />
         <div className="w-full">
           <h1 className="text-lg font-bold">{dataCheckout.productName}</h1>
-          <div className="flex gap-5 text-sm">
-            <div className="flex gap-1">
-              <h1>Type: </h1>
-              <div>{dataCheckout.productType}</div>
-            </div>
-            <div className="flex">
-              <span className="flex flex-col justify-center text-xs">
-                <FaUser />
-              </span>
-              <h1>{dataCheckout.numberOfPerson} Person</h1>
-            </div>
-          </div>
-          <div className="border-b pb-4">
-            <h1 className=" font-semibold">
-              Total Price: {formatRupiah(dataCheckout.productPrice)}
-            </h1>
-          </div>
+          <div className="flex gap-5 text-sm"></div>
+
           <div className=" space-y-1">
             <div className="pb-1 border-b">
               <h1>Basic Information</h1>
               <h2 className="text-sm text-gray-500">Include Tax</h2>
             </div>
-            <div className="flex justify-between  pb-1 border-b">
-              <h1 className="text-sm">Basic Fee</h1>
-              <h2 className="font-bold">
-                {formatRupiah(dataCheckout.basicFee)}
-              </h2>
+            <div className="flex text-sm w-full  gap-3 pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Product </h1>
+                <p className="">:</p>
+              </div>
+              <h1>{dataCheckout.productType}</h1>
             </div>
-            <div className="flex justify-between  pb-1 border-b">
-              <h1 className="text-sm">Your Point</h1>
-              <h2 className="font-bold">{formatRupiah(pointData.points)}</h2>
+            <div className="flex text-sm w-full  gap-3 pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Person </h1>
+                <p className="">:</p>
+              </div>
+              <h1>{dataCheckout.numberOfPerson} Person</h1>
             </div>
-            <div className="flex justify-between  pb-1 border-b ">
-              <h1 className="text-sm">Total</h1>
-              <h2 className="font-bold">
+            <div className="flex text-sm w-full  gap-3 pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Date </h1>
+                <p className="">:</p>
+              </div>
+              <h1>{dataCheckout.date}</h1>
+            </div>
+            <div className="flex text-sm w-full justify-between pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Price</h1>
+                <p className="">:</p>
+              </div>
+              <div className="font-bold text-base">
+                {' '}
+                {formatRupiah(dataCheckout.productPrice)}
+              </div>
+            </div>
+
+            <div className="flex text-sm w-full justify-between pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Your Point</h1>
+                <p className="">:</p>
+              </div>
+              <div className="font-bold text-base">
+                {' '}
+                {formatRupiah(pointData?.points)}
+              </div>
+            </div>
+            <div className="flex text-sm w-full justify-between pb-1 border-b">
+              <div className="flex justify-between w-20 ">
+                <h1>Total </h1>
+                <p className="">:</p>
+              </div>
+              <div className="font-bold text-base">
+                {' '}
                 {formatRupiah(discountedTotalFee)}
-              </h2>
+              </div>
             </div>
           </div>
         </div>

@@ -136,28 +136,17 @@ function VendorContent() {
               {activeDetail === 'products' && (
                 <section className="mt-4 mb-4 flex flex-col ">
                   <div className="flex gap-5">
-                    <div className="flex flex-wrap gap-7">
-                      {!loading &&
-                        selectedVendor === '' &&
-                        allActivityVendor.map((a) => (
-                          <ActivityCardVendor activity={a} key={a.id} />
-                        ))}
-                      {!loading &&
-                        activityVendor.map((a) => (
-                          <ActivityCardVendor activity={a} key={a.id} />
-                        ))}
-                    </div>
+                    {!loading &&
+                      selectedVendor === '' &&
+                      allActivityVendor.map((a) => (
+                        <ActivityCardVendor activity={a} key={a.id} />
+                      ))}
+                    {!loading &&
+                      activityVendor.map((a) => (
+                        <ActivityCardVendor activity={a} key={a.id} />
+                      ))}
                     <div>
-                      <div>
-                        {loading && (
-                          <div className="flex ml-[420px] mt-[150px] justify-center">
-                            <div className="flex flex-col items-center">
-                              <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-gray-900"></div>
-                              <p className="text-sm mt-2">Loading...</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      <div>{loading && <p>Memuat...</p>}</div>
                       <div>
                         {!loading &&
                           notFound &&
@@ -201,19 +190,10 @@ function VendorContent() {
                       ))}
                   </div>
                   <div>
-                    <div>
-                      {loading && (
-                        <div className="">
-                          <div className="">
-                            <div className="animate-spin rounded-full  border-b-4 border-gray-900"></div>
-                            <p className="text-sm mt-2">Loading...</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <div>{loading && <p>Memuat...</p>}</div>
                     <div>
                       {!loading && notFoundPackage && (
-                        <p>Tidak ada package yang ditemukan.</p>
+                        <p>Tidak ada aktivitas yang ditemukan.</p>
                       )}
                     </div>
                   </div>

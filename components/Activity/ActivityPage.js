@@ -1,12 +1,13 @@
-/* eslint-disable @next/next/no-img-element */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoPeople } from 'react-icons/io5'
 import { RiCircleFill } from 'react-icons/ri'
 import { Rating } from '../Rating'
 import { CiShop } from 'react-icons/ci'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function ActivityPage({ activity }) {
+  const router = useRouter()
   const { data } = activity
   const formatRupiah = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -38,6 +39,20 @@ export default function ActivityPage({ activity }) {
   const guarantee2 = guaranteed ? guaranteed.Guarantee2 : ''
   const refundable = guaranteed ? guaranteed.Refundable : ''
   const safe = guaranteed ? guaranteed.Safe : ''
+
+  const [loadingBookNow, setLoadingBookNow] = useState(false)
+
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
+  const handleBookNow = () => {
+    if (!token) {
+      router.push(`/login?redirect=${window.location.pathname}`)
+    } else {
+      setLoadingBookNow(true)
+      router.push(`/activity/checkout/${id}`)
+    }
+  }
 
   return (
     <div className="">
@@ -181,11 +196,15 @@ export default function ActivityPage({ activity }) {
             <h1 className="flex justify-center">{safe}</h1>
           </div>
           <div>
-            <Link href={`/activity/checkout/${id}`}>
-              <button className="w-full bg-[#FF7A00] text-white p-2 rounded-md mt-4">
-                Book Now
-              </button>
-            </Link>
+            <button
+              onClick={handleBookNow}
+              className={`w-full bg-[#FF7A00] text-white p-2 rounded-md mt-4 ${
+                loadingBookNow ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={loadingBookNow}
+            >
+              {loadingBookNow ? 'Loading...' : 'Book Now'}
+            </button>
           </div>
         </div>
       </div>

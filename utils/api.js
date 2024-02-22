@@ -53,7 +53,7 @@ export async function fetchTypeVendorData() {
 export async function fetchActivityData(page, searchQuery, minPrice, maxPrice) {
   try {
     const response = await fetch(
-      `https://api.dev.vacaba.id/api/v1/activity-service/activity?page=${page}&limit=3&search=${searchQuery}&minPrice=${minPrice}&maxPrice=${maxPrice}&mostVisited=true`,
+      `https://api.dev.vacaba.id/api/v1/activity-service/activity?page=${page}&limit=8&search=${searchQuery}&minPrice=${minPrice}&maxPrice=${maxPrice}&mostVisited=true`,
       {
         method: 'GET',
         headers: {
@@ -107,7 +107,7 @@ export async function fetchActivityVendorData(
 export async function fetchPackageData(page, searchQuery, minPrice, maxPrice) {
   try {
     const response = await fetch(
-      `https://api.dev.vacaba.id/api/v1/activity-service/package?page=${page}&limit=2&search=${searchQuery}&minPrice=${minPrice}&maxPrice=${maxPrice}&mostVisited=true`,
+      `https://api.dev.vacaba.id/api/v1/activity-service/package?page=${page}&limit=5&search=${searchQuery}&minPrice=${minPrice}&maxPrice=${maxPrice}&mostVisited=true`,
       {
         method: 'GET',
         headers: {
@@ -160,77 +160,77 @@ export async function fetchPackageVendorData(
 
 // payment
 
-export const fetchPointData = async (token) => {
-  try {
-    const response = await fetch(`https://api.dev.vacaba.id/api/v1/points`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-        'X-Api-Key': 'VACABADEV',
-      },
-    })
+// export const fetchPointData = async (token) => {
+//   try {
+//     const response = await fetch(`https://api.dev.vacaba.id/api/v1/points`, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//         'X-Api-Key': 'VACABADEV',
+//       },
+//     })
 
-    if (!response.ok) {
-      throw new Error('Gagal mengambil data poin')
-    }
+//     if (!response.ok) {
+//       throw new Error('Gagal mengambil data poin')
+//     }
 
-    const data = await response.json()
-    return data.data
-  } catch (err) {
-    console.log(err.message)
-    return null
-  }
-}
+//     const data = await response.json()
+//     return data.data
+//   } catch (err) {
+//     console.log(err.message)
+//     return null
+//   }
+// }
 
-export const fetchPaymentMethods = async (token) => {
-  try {
-    const response = await fetch(
-      `https://api.dev.vacaba.id/api/v1/payments/methods`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-Api-Key': 'VACABADEV',
-        },
-      },
-    )
+// export const fetchPaymentMethods = async (token) => {
+//   try {
+//     const response = await fetch(
+//       `https://api.dev.vacaba.id/api/v1/payments/methods`,
+//       {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${token}`,
+//           'X-Api-Key': 'VACABADEV',
+//         },
+//       },
+//     )
 
-    if (!response.ok) {
-      throw new Error('Gagal mengambil metode pembayaran')
-    }
+//     if (!response.ok) {
+//       throw new Error('Gagal mengambil metode pembayaran')
+//     }
 
-    const data = await response.json()
-    return data.data
-  } catch (err) {
-    console.log(err.message)
-    return null
-  }
-}
+//     const data = await response.json()
+//     return data.data
+//   } catch (err) {
+//     console.log(err.message)
+//     return null
+//   }
+// }
 
-export const fetchCheckoutData = async (id, token) => {
-  try {
-    const response = await fetch(
-      `https://api.dev.vacaba.id/api/v1/bookings/${id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-Api-Key': 'VACABADEV',
-        },
-      },
-    )
+// export const fetchCheckoutData = async (id, token) => {
+//   try {
+//     const response = await fetch(
+//       `https://api.dev.vacaba.id/api/v1/bookings/${id}`,
+//       {
+//         method: 'GET',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           Authorization: `Bearer ${token}`,
+//           'X-Api-Key': 'VACABADEV',
+//         },
+//       },
+//     )
 
-    if (!response.ok) {
-      throw new Error('Gagal mengambil data checkout')
-    }
+//     if (!response.ok) {
+//       throw new Error('Gagal mengambil data checkout')
+//     }
 
-    const data = await response.json()
-    return data.data
-  } catch (err) {
-    console.log(err.message)
-    return null
-  }
-}
+//     const data = await response.json()
+//     return data.data
+//   } catch (err) {
+//     console.log(err.message)
+//     return null
+//   }
+// }

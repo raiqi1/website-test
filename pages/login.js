@@ -8,15 +8,15 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
 export default function LoginScreen() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const router = useRouter();
   const { redirect } = router.query;
 
-  useEffect(() => {
-    if (session?.user) {
-      router.push(redirect || "/");
-    }
-  }, [router, session, redirect]);
+  // useEffect(() => {
+  //   if (session?.user) {
+  //     router.push(redirect || "/");
+  //   }
+  // }, [router, session, redirect]);
 
   const [loading, setLoading] = useState(false); // State untuk menandai apakah permintaan sedang dalam proses
 

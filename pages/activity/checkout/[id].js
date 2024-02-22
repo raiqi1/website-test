@@ -95,6 +95,7 @@ export default function Checkout() {
     try {
       const token = localStorage.getItem('token')
       const productUUID = destinationTarget.id
+      dispatch(setLoading(true))
       const data = await checkoutActivity(
         token,
         contactEmail,
@@ -113,6 +114,8 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      dispatch(setLoading(false))
     }
   }
 
@@ -151,7 +154,7 @@ export default function Checkout() {
                   className="w-full"
                   id="contactNumber"
                   {...register('contactNumber', {
-                    required: 'Silakan masukkan nama lengkap',
+                    required: 'Silakan masukkan nomor telepon',
                   })}
                   defaultValue={userData.phoneNumber}
                 />

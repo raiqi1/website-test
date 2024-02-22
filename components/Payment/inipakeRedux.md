@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react'
+// di dalam file CheckoutSuccessPage.js
+
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Layout from '../../../components/Layout'
 import CheckOutAndPayment from '../../../components/Checkout/CheckOutAndPayment'
-import { useRouter } from 'next/router'
 import PaymentMethods from '../../../components/Checkout/PaymentMethods'
 import Switch from 'react-switch'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+import IconPayment from '../../../components/Payment/IconPayment'
 import {
   fetchPointDataAPI,
   fetchPaymentMethodsAPI,
@@ -11,34 +16,47 @@ import {
   fetchCheckoutSuccessDataAPI,
   postPaymentAPI,
 } from '../../../tool/apipayment'
-import { toast } from 'react-toastify'
-import IconPayment from '../../../components/Payment/IconPayment'
+import {
+  setDataCheckout,
+  setDataCheckoutMax,
+  setDiscountedTotalFee,
+  setIsLoading,
+  setIsLoadingPayment,
+  setOriginalTotalFee,
+  setPaymentSuccess,
+  setPaymentData,
+  setPointData,
+  setSelectedChannel,
+  setUsePoint,
+} from '../../../tool/paymentSlice'
 
 export default function CheckoutSuccessPage() {
+  const dispatch = useDispatch()
   const router = useRouter()
-  const [dataCheckout, setDataCheckout] = useState({})
-  const [paymentData, setPaymentData] = useState({})
-  const [selectedChannel, setSelectedChannel] = useState('')
-  const [paymentSuccess, setPaymentSuccess] = useState({})
-  const [usePoint, setUsePoint] = useState(false)
-  const [pointData, setPointData] = useState({})
-  const [originalTotalFee, setOriginalTotalFee] = useState(0)
-  const [discountedTotalFee, setDiscountedTotalFee] = useState(0)
-  const [dataCheckoutMax, setDataCheckoutMax] = useState({})
-  const [isLoadingPayment, setIsLoadingPayment] = useState(false) // State untuk loading tombol bayar
-  const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingSuccessPage, setIsLoadingSuccessPage] = useState(false)
-
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
+  const {
+    dataCheckout,
+    dataCheckoutMax,
+    discountedTotalFee,
+    isLoading,
+    isLoadingPayment,
+    originalTotalFee,
+    paymentSuccess,
+    paymentData,
+    pointData,
+    selectedChannel,
+    usePoint,
+  } = useSelector((state) => state.payment)
 
   useEffect(() => {
     async function fetchData() {
       try {
         const fetchedPointData = await fetchPointDataAPI(token)
         const fetchedPaymentData = await fetchPaymentMethodsAPI(token)
-        setPointData(fetchedPointData)
-        setPaymentData(fetchedPaymentData)
+        dispatch(setPointData(fetchedPointData))
+        dispatch(setPaymentData(fetchedPaymentData))
       } catch (error) {
         if (error.response && error.response.status === 401) {
           router.push(`/login?redirect=${window.location.pathname}`)
@@ -47,19 +65,18 @@ export default function CheckoutSuccessPage() {
         }
         console.error('Terjadi kesalahan saat mengambil data:', error.message)
       } finally {
-        setIsLoading(false)
+        dispatch(setIsLoading(false))
       }
     }
-
     fetchData()
-  }, [token])
+  }, [token, dispatch, router])
 
   useEffect(() => {
     async function fetchCheckout() {
       try {
         const bookingId = dataCheckout?.bookingId
         const data = await fetchCheckoutDataAPI(bookingId, token)
-        setDataCheckoutMax(data)
+        dispatch(setDataCheckoutMax(data))
       } catch (error) {
         if (error.response && error.response.status === 401) {
           router.push(`/login?redirect=${window.location.pathname}`)
@@ -68,24 +85,24 @@ export default function CheckoutSuccessPage() {
         }
       }
     }
-
-    fetchCheckout()
-  }, [dataCheckout.bookingId])
+    if (dataCheckout.bookingId) {
+      fetchCheckout()
+    }
+  }, [dataCheckout.bookingId, token, dispatch, router])
 
   useEffect(() => {
     async function fetchCheckoutSuccess() {
       try {
         const id = window.location.pathname.split('/').pop()
         const data = await fetchCheckoutSuccessDataAPI(id, token)
-        setDataCheckout(data)
-        setOriginalTotalFee(data.totalFee)
+        dispatch(setDataCheckout(data))
+        dispatch(setOriginalTotalFee(data.totalFee))
       } catch (error) {
         toast.error(error.message)
       }
     }
-
     fetchCheckoutSuccess()
-  }, [token])
+  }, [token, dispatch])
 
   const pointUse = dataCheckoutMax?.bookingDetails
 
@@ -99,10 +116,9 @@ export default function CheckoutSuccessPage() {
       if (usePoint) {
         const pointsToUse = Math.min(pointUse.MaxPointUse, pointData.points)
         const discountedTotal = originalTotalFee - pointsToUse
-
-        setDiscountedTotalFee(discountedTotal)
+        dispatch(setDiscountedTotalFee(discountedTotal))
       } else {
-        setDiscountedTotalFee(originalTotalFee)
+        dispatch(setDiscountedTotalFee(originalTotalFee))
       }
     }
   }, [
@@ -111,10 +127,11 @@ export default function CheckoutSuccessPage() {
     pointData?.points,
     pointUse?.MaxPointUse,
     originalTotalFee,
+    dispatch,
   ])
 
   const handleChannelChange = (channel) => {
-    setSelectedChannel(channel)
+    dispatch(setSelectedChannel(channel))
   }
 
   const handlePayment = () => {
@@ -122,8 +139,7 @@ export default function CheckoutSuccessPage() {
       toast.error('Pilih metode pembayaran terlebih dahulu!')
       return
     }
-
-    setIsLoadingPayment(true)
+    dispatch(setIsLoadingPayment(true))
 
     const selectedPaymentMethod = paymentData.find((p) =>
       p.channels.some((channel) => channel.code === selectedChannel),
@@ -138,67 +154,44 @@ export default function CheckoutSuccessPage() {
       token,
     })
       .then((data) => {
-        setPaymentSuccess(data)
+        dispatch(setPaymentSuccess(data))
       })
       .catch((error) => {
         toast.error(error.message)
       })
       .finally(() => {
-        setIsLoadingPayment(false)
+        dispatch(setIsLoadingPayment(false))
       })
   }
 
   const handleToggleUsePoint = () => {
     if (pointData?.points > 0 && pointUse?.MaxPointUse > 0) {
-      setUsePoint((prevUsePoint) => !prevUsePoint)
+      dispatch(setUsePoint((prevUsePoint) => !prevUsePoint))
     }
   }
 
   useEffect(() => {
     if (pointUse?.MaxPointUse && pointData?.points) {
       if (pointUse.MaxPointUse > pointData.points) {
-        setUsePoint(false)
+        dispatch(setUsePoint(false))
       }
     }
-  }, [pointUse?.MaxPointUse, pointData?.points])
+  }, [pointUse?.MaxPointUse, pointData?.points, dispatch])
 
   useEffect(() => {
     if (paymentSuccess?.message === 'success' && paymentSuccess?.data) {
       const { paymentUrl, bookingId } = paymentSuccess.data
       if (paymentUrl) {
-        setIsLoadingSuccessPage(true) // Set status loading saat akan melakukan pembayaran
-        const paymentWindow = window.open(paymentUrl, '_blank')
-        if (
-          !paymentWindow ||
-          paymentWindow.closed ||
-          typeof paymentWindow.closed === 'undefined'
-        ) {
-          // Jika pembukaan tab baru diblokir, redirect ke halaman pembayaran sukses
-          router.push(`/booking/${bookingId}`)
-          setIsLoadingSuccessPage(false) // Hentikan status loading jika redirect terjadi
-        } else {
-          const interval = setInterval(() => {
-            if (paymentWindow.closed) {
-              router.push(`/booking/${bookingId}`)
-              clearInterval(interval)
-              setIsLoadingSuccessPage(false) // Hentikan status loading jika tab ditutup
-            }
-          }, 1000)
-        }
+        window.location.href = paymentUrl
       } else if (bookingId) {
         router.push(`/booking/${bookingId}`)
       }
     }
   }, [paymentSuccess, router])
-  // console.log('dataCheckout', dataCheckout)
-
-  console.log('paymentSuccess', paymentSuccess)
-
-  console.log('paymentData', paymentData)
 
   return (
     <Layout>
-      {isLoading ? ( // Menampilkan loading jika sedang rendering
+      {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col items-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-gray-900"></div>
@@ -221,7 +214,7 @@ export default function CheckoutSuccessPage() {
           </div>
         </div>
       )}
-      {!isLoading && ( // Menampilkan komponen ketika loading selesai
+      {!isLoading && (
         <div className="flex max-lg:flex-col  ml-12 mr-12 font-['Poppins'] gap-5">
           <div className="w-[680px]">
             <div className="gap-3">
@@ -275,12 +268,9 @@ export default function CheckoutSuccessPage() {
             <button
               onClick={handlePayment}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-              disabled={isLoadingPayment} // Men-disable tombol saat proses loading
+              disabled={isLoadingPayment}
             >
-              {isLoadingPayment || isLoadingSuccessPage
-                ? 'Memproses...'
-                : 'Bayar'}{' '}
-              {/* Teks dinamis sesuai status loading */}
+              {isLoadingPayment ? 'Memproses...' : 'Bayar'}
             </button>
           </div>
         </div>

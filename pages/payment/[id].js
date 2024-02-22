@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import BookingAndDetails from '../../components/Payment'
+import PaymentSuccess from '../../components/Payment/PaymentSuccess'
 
 export default function BookingScreen() {
   const router = useRouter()
 
-  const [isLoading, setIsLoading] = useState(true)
+  //   const [isLoading, setIsLoading] = useState(true)
   const [bookingData, setBookingData] = useState({})
   const [ActivityData, setActivityData] = useState({})
   const [showDate, setShowDate] = useState('')
@@ -31,7 +31,7 @@ export default function BookingScreen() {
   const fetchBooking = async (id) => {
     try {
       const response = await fetch(
-        `https://api.dev.vacaba.id/api/v1/bookings/${id}`,
+        `https://api.dev.vacaba.id/api/v1/payments/${id}`,
         {
           method: 'GET',
           headers: {
@@ -52,13 +52,11 @@ export default function BookingScreen() {
       }
 
       const data = await response.json()
-      setBookingData(data.data.bookingDetails)
+      //   setBookingData(data.data.bookingDetails)
       setShowData(data.data)
-      setShowDate(data.data.bookingDetails.Date)
     } catch (err) {
       console.log(err.message)
     }
-    setIsLoading(true)
   }
 
   // Fungsi untuk mengambil data aktivitas dari API
@@ -80,14 +78,13 @@ export default function BookingScreen() {
     } catch (err) {
       console.log(err.message)
     }
-    setIsLoading(true)
   }
 
   // Fungsi untuk mengambil data pembayaran dari API
-  const fetchPayment = async (id) => {
+  const fetchPayment = async () => {
     try {
       const response = await fetch(
-        `https://api.dev.vacaba.id/api/v1/payments/booking/${id}`,
+        `https://api.dev.vacaba.id/api/v1/payments/booking/${showData.bookingId}`,
         {
           method: 'GET',
           headers: {
@@ -103,7 +100,6 @@ export default function BookingScreen() {
     } catch (err) {
       console.log(err.message)
     }
-    setIsLoading(true)
   }
 
   useEffect(() => {
@@ -112,11 +108,11 @@ export default function BookingScreen() {
     }
   }, [router.query.id])
 
-  useEffect(() => {
-    if (bookingData.ProductUUID) {
-      fetchData(bookingData.ProductUUID)
-    }
-  }, [bookingData.ProductUUID])
+  //   useEffect(() => {
+  //     if (bookingData.ProductUUID) {
+  //       fetchData(bookingData.ProductUUID)
+  //     }
+  //   }, [bookingData.ProductUUID])
 
   useEffect(() => {
     if (showData.bookingId) {
@@ -132,18 +128,17 @@ export default function BookingScreen() {
     }
   }, [payment.paymentStatus])
 
-  useEffect(() => {
-    setIsLoading(false)
-  }, [bookingData, ActivityData, payment])
+  //   useEffect(() => {
+  //     setIsLoading(false)
+  //   }, [bookingData, ActivityData, payment])
 
-  console.log('showData', showData);
-  console.log('payment', payment);
-  console.log('bookingData', bookingData);
+  console.log('showData', showData)
+  console.log('payment', payment)
 
   return (
     <div className="font-['Poppins']">
-      {isLoading ? (
-        <div className="flex items-center justify-center">
+      {/* {isLoading ? ( */}
+      {/* <div className="flex items-center justify-center">
           <svg
             className="animate-spin h-5 w-5 mr-3 text-gray-500"
             xmlns="http://www.w3.org/2000/svg"
@@ -165,20 +160,20 @@ export default function BookingScreen() {
             ></path>
           </svg>
           Loading...
-        </div>
-      ) : (
-        <BookingAndDetails
-          bookingData={bookingData}
-          ActivityData={ActivityData}
-          showDate={showDate}
-          showData={showData}
-          payment={payment}
-          paid={paid}
-          showSuccess={showSuccess}
-          showPayment={showPayment}
-          formatRupiah={formatRupiah}
-        />
-      )}
+        </div> */}
+      {/* ) : ( */}
+      <PaymentSuccess
+        //   bookingData={bookingData}
+        ActivityData={ActivityData}
+        //   showDate={showDate}
+        showData={showData}
+        payment={payment}
+        paid={paid}
+        showSuccess={showSuccess}
+        showPayment={showPayment}
+        formatRupiah={formatRupiah}
+      />
+      {/* )} */}
     </div>
   )
 }
