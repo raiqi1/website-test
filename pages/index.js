@@ -1,68 +1,119 @@
-/* eslint-disable @next/next/no-img-element */
-import axios from "axios";
-import { useContext } from "react";
-import { toast } from "react-toastify";
-import Layout from "../components/Layout";
-import ProductItem from "../components/ProductItem";
-import Product from "../models/Product";
-import db from "../utils/db";
-import { Store } from "../utils/Store";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import Link from "next/link";
-import { MultiSearch } from "../components/MultiSearch";
-export default function Home({ products, featuredProducts }) {
-  const { state, dispatch } = useContext(Store);
-  const { cart } = state;
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import Layout from '../components/Layout'
+import Product from '../models/Product'
+import db from '../utils/db'
+import { Carousel } from 'react-responsive-carousel'
+import 'react-responsive-carousel/lib/styles/carousel.min.css'
+import ActivityCardVendor from '../components/Vendor/ActivityCardVendor'
 
-  const addToCartHandler = async (product) => {
-    const existItem = cart.cartItems.find((x) => x.slug === product.slug);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${product._id}`);
+export default function Home() {
+  const [species, setSpecies] = useState([])
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
 
-    if (data.countInStock < quantity) {
-      return toast.error("Sorry. Product is out of stock");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(
+          `https://test.api.sahabatlautlestari.com/species?PageNumber=${pageNumber}&PageSize=${pageSize}`
+        )
+        setSpecies(data.data)
+        setTotalPages(data.totalPages)
+        console.log(data)
+      } catch (err) {
+        console.log(err)
+      }
     }
-    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    fetchData()
 
-    toast.success("Product added to the cart");
-  };
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [pageNumber, pageSize])
+
+  console.log('species', species)
+
+  const handleNextPage = () => {
+    if (pageNumber < totalPages) {
+      setPageNumber(pageNumber + 1)
+    }
+  }
+
+  const handlePreviousPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(pageNumber - 1)
+    }
+  }
+
+  const handlePageClick = (page) => {
+    setPageNumber(page)
+  }
 
   return (
     <Layout title="Home Page">
-      {/* <ThemeSwitch /> */}
       <Carousel showThumbs={false} autoPlay>
-        {featuredProducts.map((product) => (
-          <div key={product._id}>
-            <Link href={`/product/${product.slug}`} passHref className="flex">
-              <img src={product.banner} alt={product.name} />
-            </Link>
+          <div >
+              <img src="https://sahabatlautlestari.com/wp-content/uploads/2022/11/11-1.png" alt='' />
           </div>
-        ))}
       </Carousel>
-      <MultiSearch />
-      <h2 className="h2 my-4">Latest Products</h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {products.map((product) => (
-          <ProductItem
-            product={product}
-            key={product.slug}
-            addToCartHandler={addToCartHandler}
-          ></ProductItem>
-        ))}
-      </div>
+      <h2 className="h2 my-4">Latest Species</h2>
+        <>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {species?.map((p) => (
+              <ActivityCardVendor activity={p} key={p._id} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="pagination flex justify-center items-center mt-4">
+            <button
+              onClick={handlePreviousPage}
+              disabled={pageNumber === 1}
+              className={`px-4 py-2 mx-1 rounded ${
+                pageNumber === 1
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-blue-500 text-white'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {/* Menampilkan angka halaman */}
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageClick(index + 1)}
+                className={`px-3 py-1 mx-1 rounded ${
+                  pageNumber === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={handleNextPage}
+              disabled={pageNumber === totalPages}
+              className={`px-4 py-2 mx-1 rounded ${
+                pageNumber === totalPages
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-blue-500 text-white'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        </>
     </Layout>
-  );
+  )
 }
 
 export async function getServerSideProps() {
-  await db.connect();
-  const products = await Product.find().lean();
-  const featuredProducts = await Product.find({ isFeatured: true }).lean();
+  await db.connect()
+  const featuredProducts = await Product.find({ isFeatured: true }).lean()
   return {
     props: {
       featuredProducts: featuredProducts.map(db.convertDocToObj),
-      products: products.map(db.convertDocToObj),
     },
-  };
+  }
 }

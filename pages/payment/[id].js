@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import PaymentSuccess from '../../components/Payment/PaymentSuccess'
@@ -6,9 +7,7 @@ export default function BookingScreen() {
   const router = useRouter()
 
   //   const [isLoading, setIsLoading] = useState(true)
-  const [bookingData, setBookingData] = useState({})
   const [ActivityData, setActivityData] = useState({})
-  const [showDate, setShowDate] = useState('')
   const [showData, setShowData] = useState({})
   const [payment, setPayment] = useState([])
   const [paid, setPaid] = useState('')

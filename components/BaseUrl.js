@@ -1,0 +1,1 @@
+export const BaseUrl = 'https://test.api.sahabatlautlestari.com/species'

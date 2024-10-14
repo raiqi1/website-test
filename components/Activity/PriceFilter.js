@@ -5,7 +5,6 @@ export default function PriceFilter({
   maxPrice,
   setMinPrice,
   setMaxPrice,
-  handleFilterChange,
   handleClearFilter,
   filtering,
 }) {

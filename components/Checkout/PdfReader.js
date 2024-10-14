@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react'
 import { Document, Page } from 'react-pdf'
 import pdf from './constore.pdf'

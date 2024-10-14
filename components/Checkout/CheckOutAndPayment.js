@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react'
-import { FaUser } from 'react-icons/fa'
 
 export default function CheckOutAndPayment({
   dataCheckout,

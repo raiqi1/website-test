@@ -1,20 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import { useRouter } from 'next/router'
+import React from 'react'
 
 export default function DestinationPage({ data }) {
-  const formatRupiah = (price) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const router = useRouter()
+  const handleDetailPage = () => {
+    router.push(`/species-detail/${data?.id}`)
+  }
   return (
-    <div>
+    <div className="cursor-pointer" onClick={handleDetailPage}>
       <div class="relative flex w-full max-w-[21rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-lg mb-5">
         <div class="relative  overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
           <img
-            src={data.thumbnail}
+            src={data?.imageUrl}
             alt="ui/ux review check"
             className="w-[400px] h-[230px]"
           />
@@ -39,45 +37,45 @@ export default function DestinationPage({ data }) {
           <div class="pt-3  mb-2">
             <div class="flex items-center justify-between">
               <h5 class="block font-bold text-xl antialiased leading-snug tracking-normal text-blue-gray-900">
-                {data.name}
+                {data?.faoCode}
               </h5>
             </div>
           </div>
           <div className="flex pt-1  gap-2 justify-between ">
             <div className="flex gap-2 text-[rgba(121,121,121,1)] ">
               <div className="text-center flex flex-col justify-center">
-                <img src="../../../maps.svg" alt="" />
+                Tipe Ikan :
               </div>
-              <h1 className="">{data.area_name}</h1>
+              <h1 className="">{data?.typeOfFish}</h1>
             </div>
-            <div className="flex gap-2 ">
-              <h1 className="text-sm font-bold flex flex-col justify-center">
-                Open:
-              </h1>
-              <div className="font-semibold text-sm flex flex-col justify-center">
-                {data.open_hours.slice(1, 2)}AM
-              </div>
+          </div>
+          <div className="flex gap-2 ">
+            <h1 className="text-sm font-bold flex flex-col justify-center">
+              Scientific Name :
+            </h1>
+            <div className="font-semibold text-sm flex flex-col justify-center">
+              {data?.scientificName}
             </div>
           </div>
           <div className="flex text-[rgba(121,121,121,1)] mt-1">
             <div className="flex">
               <span className="flex flex-col justify-center">
-                <img src="../../../rating.svg" alt="" className="w-4" />
+                Indonesia Name :
               </span>
-              <h1 className="ml-1 mr-1">{data.review_score.toFixed(1)}</h1>
+              <h1 className="ml-1 mr-1">{data?.indonesianName}</h1>
             </div>
-            <h1>({data.review_count} Reviews)</h1>
+          </div>
+          <div className="flex">
+            <span className="flex flex-col justify-center">Tipe Air :</span>
+            <h1>{data?.typeOfWater}</h1>
           </div>
         </div>
         <div class="pt-5">
-          <button
-            class="block w-full select-none rounded-b-lg bg-orange-500 py-2 px-7 text-center align-middle  text-lg font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            {formatRupiah(data.price)}
-          </button>
+          <div class="block w-full select-none rounded-b-lg bg-orange-500 py-2 px-7 text-center align-middle  text-lg font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+            {data?.statusInIndonesia}
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

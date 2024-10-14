@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react'
 import { IoPeople } from 'react-icons/io5'
 import { RiCircleFill } from 'react-icons/ri'
@@ -7,52 +8,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export default function ActivityPage({ activity }) {
-  const router = useRouter()
-  const { data } = activity
-  const formatRupiah = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price)
-  }
+
 
   const {
-    name,
-    thumbnailURL,
-    highlight,
-    ratingAvg,
-    numberOfVisits,
-    price,
-    reviewCount,
-    openTime,
-    duration,
-    minPerson,
-    guaranteed,
-    vendorName,
-    activityVendorID,
-    id,
-  } = data ? data : ''
-
-  const jam = Math.floor(duration / 60)
-  const guarantee1 = guaranteed ? guaranteed.Guarantee1 : ''
-  const guarantee2 = guaranteed ? guaranteed.Guarantee2 : ''
-  const refundable = guaranteed ? guaranteed.Refundable : ''
-  const safe = guaranteed ? guaranteed.Safe : ''
-
-  const [loadingBookNow, setLoadingBookNow] = useState(false)
-
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('token') : null
-
-  const handleBookNow = () => {
-    if (!token) {
-      router.push(`/login?redirect=${window.location.pathname}`)
-    } else {
-      setLoadingBookNow(true)
-      router.push(`/activity/checkout/${id}`)
-    }
-  }
+    faoCode,
+    typeOfFish,
+    scientificName,
+    englishName,
+    indonesianName,
+    localName,
+    typeOfWater,
+    imageUrl,
+    statusInIndonesia,
+    fishUtilization,
+  } = activity ? activity : ''
 
   return (
     <div className="">
@@ -65,9 +34,9 @@ export default function ActivityPage({ activity }) {
       </div>
       <div className=" w-full flex gap-8 mb-4">
         <div className="w-full">
-          {thumbnailURL && (
+          {imageUrl && (
             <img
-              src={thumbnailURL}
+              src={imageUrl}
               alt="Thumbnail"
               className="w-full h-full max-lg:w-[800px] cursor-pointer"
             />
@@ -75,135 +44,64 @@ export default function ActivityPage({ activity }) {
         </div>
         <div className="w-full font-['Poppins'] max-md:hidden ">
           <div className="w-full">
-            <h1 className=" w-full font-bold text-4xl mb-1">{name}</h1>
+            <h1 className=" w-full font-bold text-4xl mb-1">{faoCode}</h1>
             <div className="flex gap-5">
               <h2 className="flex gap-1">
                 <span className="flex flex-col justify-center">
-                  <Rating value={ratingAvg} />
-                </span>
-                <span className="flex flex-col justify-center text-sm">
-                  {ratingAvg}
-                </span>
-                <span className="flex flex-col justify-center text-sm">
-                  ({reviewCount} reviews)
+                  <Rating />
                 </span>
               </h2>
               <div className="flex">
                 <div className="flex flex-col justify-center">
                   <IoPeople />
                 </div>
-                <div className="flex flex-col justify-center">
-                  {numberOfVisits}
-                </div>
               </div>
             </div>
-            <div className="">
-              <p className="font-bold text-2xl mt-1">{formatRupiah(price)}</p>
-            </div>
-            <div className="pb-4 border-b mt-2">
-              <Link href={`/activity-vendor/${activityVendorID}`}>
-                <div className="flex gap-1  rounded-md w-[200px]  mt-3 h-7 hover:bg-gray-300 ">
-                  <span className="font-bold flex flex-col justify-center text-2xl mt-[1px]">
-                    <CiShop className="font-bold" />
-                  </span>
-                  <p className="mt-1 text-sm font-bold text-black dark:text-white">
-                    {vendorName}
-                  </p>
-                </div>
-              </Link>
+            <div className="flex mt-2 gap-2 ">
+              <h1 className='text-center flex flex-col justify-center'>Tipe Ikan :</h1>
+              <p className="font-bold text-2xl ">{typeOfFish}</p>
             </div>
             <div className="border-b pb-6">
-              <h2 className="font-bold text-xl mt-3">Activity Detail</h2>
+              <h2 className="font-bold text-xl mt-3">Detail</h2>
               <div className="flex gap-3 mt-2">
                 <span className="text-[8px] flex flex-col  justify-center mt-[2px]">
                   <RiCircleFill />
                 </span>
-                <h1 className="flex justify-center ">Duration: {jam} Hours </h1>
-              </div>
-              <div className="flex gap-3 ">
-                <span className="text-[8px] flex flex-col  justify-center mt-[2px]">
-                  <RiCircleFill />
-                </span>
-                <h1 className="flex justify-center ">Open Time: {openTime} </h1>
+                <h1 className="flex justify-center ">
+                  Scientific Name: {scientificName}{' '}
+                </h1>
               </div>
               <div className="flex gap-3 ">
                 <span className="text-[8px] flex flex-col  justify-center mt-[2px]">
                   <RiCircleFill />
                 </span>
                 <h1 className="flex justify-center ">
-                  Minimum Person: {minPerson} person
+                  English Name: {englishName}{' '}
+                </h1>
+              </div>
+              <div className="flex gap-3 ">
+                <span className="text-[8px] flex flex-col  justify-center mt-[2px]">
+                  <RiCircleFill />
+                </span>
+                <h1 className="flex justify-center ">
+                  Indonesia Name: {indonesianName}
                 </h1>
               </div>
             </div>
             <div className="border-b pb-6">
-              <h2 className="font-bold text-xl mt-3">Highlight We Offer</h2>
-              <p className="mt-2">{highlight}</p>
+              <h2 className="font-bold text-xl mt-3">Lokal Name :</h2>
+              <p className="mt-2">{localName}</p>
             </div>
           </div>
-          <div>
-            <h1 className="font-bold text-xl mt-3">We Guaranteed</h1>
-            {guarantee1 ? (
-              <div className="flex gap-2 mt-1">
-                <span className=" ">
-                  <img
-                    src="../../../images/easy.png"
-                    className="w-[22px]"
-                    alt=""
-                  />
-                </span>
-                <h1 className="text-center font-semibold">Easy Refund</h1>
-              </div>
-            ) : null}
-            <h1 className="flex justify-center">{guarantee1}</h1>
-            {guarantee2 ? (
-              <div className="flex gap-2 mt-1">
-                <span className=" ">
-                  <img
-                    src="../../../images/kalender.png"
-                    className="w-[21px]"
-                    alt=""
-                  />
-                </span>
-                <h1 className="text-center font-semibold">Reschedule</h1>
-              </div>
-            ) : null}
-            <h1 className="flex justify-center">{guarantee2}</h1>
-            {refundable ? (
-              <div className="flex gap-2 mt-1">
-                <span className=" ">
-                  <img
-                    src="../../../images/easy.png"
-                    className="w-[22px]"
-                    alt=""
-                  />
-                </span>
-                <h1 className="text-center font-semibold">Easy Refund</h1>
-              </div>
-            ) : null}
-            <h1 className="flex justify-center">{refundable}</h1>
-            {safe ? (
-              <div className="flex gap-2 mt-1">
-                <span className=" ">
-                  <img
-                    src="../../../images/kalender.png"
-                    className="w-[21px]"
-                    alt=""
-                  />
-                </span>
-                <h1 className="text-center font-semibold">Reschedule</h1>
-              </div>
-            ) : null}
-            <h1 className="flex justify-center">{safe}</h1>
+          <div className='flex gap-2 '>
+            <h1 className="font-bold text-xl text-center flex flex-col justify-center">Tipe Air : </h1>
+            <h1 className="flex flex-col justify-center text-center">{typeOfWater}</h1>
           </div>
           <div>
             <button
-              onClick={handleBookNow}
-              className={`w-full bg-[#FF7A00] text-white p-2 rounded-md mt-4 ${
-                loadingBookNow ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              disabled={loadingBookNow}
+              className={`w-full bg-[#FF7A00] text-white p-2 rounded-md mt-4 opacity-50 cursor-not-allowed'`}
             >
-              {loadingBookNow ? 'Loading...' : 'Book Now'}
+              {statusInIndonesia}
             </button>
           </div>
         </div>

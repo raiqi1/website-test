@@ -10,7 +10,7 @@ export function DefaultPagination() {
       variant: active === index ? "filled" : "text",
       color: "gray",
       onClick: () => setActive(index),
-    } as any);
+    });
  
   const next = () => {
     if (active === 5) return;

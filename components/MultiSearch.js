@@ -1,47 +1,40 @@
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
+import { FaSearch } from 'react-icons/fa' // Import ikon pencarian dari react-icons
 
 export const MultiSearch = () => {
-  const router = useRouter(); // Menggunakan router dari Next.js
+  const router = useRouter() // Menggunakan router dari Next.js
 
   const handleSearch = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const formData = new FormData(e.target);
-    const day = formData.get('day');
-    const name = formData.get('name');
+    const formData = new FormData(e.target)
+    const keyword = formData.get('keyword')
 
     // Navigasi ke halaman destinasi dengan query params yang sesuai
     router.push({
-      pathname: '/destinations',
-      query: { page: '1', limit: '10', day, name },
-    });
-  };
-
-  // Daftar hari dari 1 hingga 7
-  const days = ["1", "2", "3", "4", "5", "6", "7"];
+      pathname: '/species',
+      query: { Keyword: keyword, PageNumber: '1', PageSize: '10' },
+    })
+  }
 
   return (
-    <form onSubmit={handleSearch}>
-      <div className="join">
-        <select
-          name="day"
-          className="join-item select select-bordered"
-        >
-          {days.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
+    <form onSubmit={handleSearch} className="flex items-center space-x-2">
+      <div className="relative w-full max-w-xs">
+        {' '}
+        {/* Membatasi lebar input */}
         <input
-          className="join-item input input-bordered w-48"
+          className="input input-bordered w-full pr-12 py-2 rounded-full shadow-md border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-300 transition duration-200" // Styling input
           placeholder="Search"
-          name="name"
+          name="keyword"
+          required // Tambahkan required agar input tidak kosong
         />
-        <button className="join-item btn" type="submit">
-          Search
+        <button
+          type="submit"
+          className="absolute right-[0.2vw] top-1/2 transform -translate-y-1/2 p-2 rounded-full text-white bg-blue-500 hover:bg-blue-600 transition duration-200 shadow-md" // Styling tombol
+        >
+          <FaSearch size={20} /> {/* Ikon pencarian */}
         </button>
       </div>
     </form>
-  );
-};
+  )
+}
