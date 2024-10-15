@@ -46,7 +46,9 @@ const CreateSpeciesModal = ({ visible, onClose, onSpeciesCreated }) => {
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleCreate}>
+        <h1 className='text-black'>
           Create
+        </h1>
         </Button>,
       ]}
     >
