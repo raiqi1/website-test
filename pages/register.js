@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -9,16 +10,16 @@ import { useRouter } from "next/router";
 
 export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   const router = useRouter();
   const { redirect } = router.query;
 
-  useEffect(() => {
-    if (session?.user) {
-      router.push(redirect || "/");
-    }
-  }, [router, session, redirect]);
+  // useEffect(() => {
+  //   if (session?.user) {
+  //     router.push(redirect || "/");
+  //   }
+  // }, [router, session, redirect]);
 
   const {
     handleSubmit,

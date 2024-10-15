@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -7,20 +8,20 @@ import axios from 'axios';
 import Layout from '../components/Layout';
 
 export default function ProfileScreen() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   const {
     handleSubmit,
     register,
     getValues,
-    setValue,
+    // setValue,
     formState: { errors },
   } = useForm();
 
-  useEffect(() => {
-    setValue('name', session?.user?.name);
-    setValue('email', session?.user?.email);
-  }, [session?.user, setValue]);
+  // useEffect(() => {
+  //   setValue('name', session?.user?.name);
+  //   setValue('email', session?.user?.email);
+  // }, [session?.user, setValue]);
 
   const submitHandler = async ({ name, email, password }) => {
     try {
