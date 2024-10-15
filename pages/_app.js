@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
       <Provider store={store}>
         <StoreProvider>
-          <div className="dark:bg-medium dark:text-white">
+          <div className="bg-gray-300 dark:bg-gray-700 text-black">
             <Component {...pageProps} />
           </div>
         </StoreProvider>
