@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Table, Button, Modal, Form, Input, message } from 'antd'
 import axios from 'axios'
 import Head from 'next/head'
+import CreateSpeciesModal from './CreateSpeciesModal'
 
 export default function SpeciesTable() {
   const [data, setData] = useState([])
@@ -14,6 +15,7 @@ export default function SpeciesTable() {
     current: 1, // Halaman awal
     pageSize: 10, // Jumlah item per halaman
   })
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false) 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,6 +213,21 @@ export default function SpeciesTable() {
     setPagination(newPagination) // Update pagination saat user berpindah halaman
   }
 
+  const refreshData = async () => {
+    // Fungsi untuk merefresh data setelah species dibuat
+    setLoading(true)
+    try {
+      const response = await axios.get(
+        'https://test.api.sahabatlautlestari.com/species/all',
+      )
+      setData(response.data)
+    } catch (error) {
+      message.error('Failed to refresh data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div style={{ padding: '20px' }}>
       <Head>
@@ -219,6 +236,16 @@ export default function SpeciesTable() {
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>
         Dashboard Admin
       </h1>
+      <Button
+          type="primary"
+          style={{ marginBottom: '20px', backgroundColor: '#52c41a' }}
+          onClick={() => setIsCreateModalVisible(true)}
+        >
+          <h1 className='text-black '>
+
+          Create Species
+          </h1>
+        </Button>
       <div style={{ maxWidth: '90%', margin: '0 auto' }}>
         {' '}
         {/* Membatasi lebar tabel */}
@@ -327,6 +354,11 @@ export default function SpeciesTable() {
           </Form.Item>
         </Form>
       </Modal>
+      <CreateSpeciesModal 
+          visible={isCreateModalVisible}
+          onClose={() => setIsCreateModalVisible(false)}
+          onCreateSuccess={refreshData}
+        />
     </div>
   )
 }
