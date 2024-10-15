@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import '../styles/globals.css'
 import { SessionProvider } from 'next-auth/react'
 import { StoreProvider } from '../utils/Store'
@@ -6,7 +7,6 @@ import store from '../tool/store'
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <SessionProvider session={session}>
       <Provider store={store}>
         <StoreProvider>
           <div className="dark:bg-medium dark:text-white">
@@ -14,7 +14,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           </div>
         </StoreProvider>
       </Provider>
-    </SessionProvider>
   )
 }
 
