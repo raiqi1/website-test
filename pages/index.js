@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
@@ -108,12 +109,12 @@ export default function Home() {
   )
 }
 
-export async function getServerSideProps() {
-  await db.connect()
-  const featuredProducts = await Product.find({ isFeatured: true }).lean()
-  return {
-    props: {
-      featuredProducts: featuredProducts.map(db.convertDocToObj),
-    },
-  }
-}
+// export async function getServerSideProps() {
+//   await db.connect()
+//   const featuredProducts = await Product.find({ isFeatured: true }).lean()
+//   return {
+//     props: {
+//       featuredProducts: featuredProducts.map(db.convertDocToObj),
+//     },
+//   }
+// }
