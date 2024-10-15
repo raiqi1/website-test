@@ -7,7 +7,7 @@
    ```
 2. Buka folder proyek:
    ```bash
-   cd nama-repositori
+   cd website-test-
    ```
 3. Jalankan Perintah install:
    ```bash
