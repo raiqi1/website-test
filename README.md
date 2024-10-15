@@ -3,11 +3,11 @@
 ### Cara Menjalankan Proyek Secara Lokal
 1. Clone repositori ini ke komputer Anda:
    ```bash
-   git clone https://github.com/raiqi1/website-test-.git
+   git clone https://github.com/raiqi1/website-test.git
    ```
 2. Buka folder proyek:
    ```bash
-   cd website-test-
+   cd website-test
    ```
 3. Jalankan Perintah install:
    ```bash
