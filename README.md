@@ -9,11 +9,11 @@
    ```bash
    cd nama-repositori
    ```
-3.  Jalankan Perintah install:
+3. Jalankan Perintah install:
    ```bash
    npm install
    ```
-4.  Jalankan Project:
+4. Jalankan Project:
    ```bash
    npm run dev
    ```
