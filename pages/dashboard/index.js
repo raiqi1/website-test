@@ -15,7 +15,7 @@ export default function SpeciesTable() {
     current: 1, // Halaman awal
     pageSize: 10, // Jumlah item per halaman
   })
-  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false) 
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -213,19 +213,9 @@ export default function SpeciesTable() {
     setPagination(newPagination) // Update pagination saat user berpindah halaman
   }
 
-  const refreshData = async () => {
-    // Fungsi untuk merefresh data setelah species dibuat
-    setLoading(true)
-    try {
-      const response = await axios.get(
-        'https://test.api.sahabatlautlestari.com/species/all',
-      )
-      setData(response.data)
-    } catch (error) {
-      message.error('Failed to refresh data')
-    } finally {
-      setLoading(false)
-    }
+  // Fungsi untuk menambahkan species baru di posisi paling atas
+  const handleSpeciesCreated = (newSpecies) => {
+    setData((prevData) => [newSpecies, ...prevData]) // Tambahkan di urutan pertama
   }
 
   return (
@@ -237,18 +227,13 @@ export default function SpeciesTable() {
         Dashboard Admin
       </h1>
       <Button
-          type="primary"
-          style={{ marginBottom: '20px', backgroundColor: '#52c41a' }}
-          onClick={() => setIsCreateModalVisible(true)}
-        >
-          <h1 className='text-black '>
-
-          Create Species
-          </h1>
-        </Button>
+        type="primary"
+        style={{ marginBottom: '20px', backgroundColor: '#52c41a' }}
+        onClick={() => setIsCreateModalVisible(true)}
+      >
+        <h1 className="text-black ">Create Species</h1>
+      </Button>
       <div style={{ maxWidth: '90%', margin: '0 auto' }}>
-        {' '}
-        {/* Membatasi lebar tabel */}
         {data.length > 0 ? (
           <Table
             columns={columns}
@@ -354,11 +339,11 @@ export default function SpeciesTable() {
           </Form.Item>
         </Form>
       </Modal>
-      <CreateSpeciesModal 
-          visible={isCreateModalVisible}
-          onClose={() => setIsCreateModalVisible(false)}
-          onCreateSuccess={refreshData}
-        />
+      <CreateSpeciesModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        onSpeciesCreated={handleSpeciesCreated} // Pass function to handle new species
+      />
     </div>
   )
 }
